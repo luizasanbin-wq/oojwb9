@@ -8,7 +8,7 @@
     <!-- الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Rakkas&family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
     
     <style>
         /* ==================== 1. التنسيقات العامة ==================== */
@@ -23,7 +23,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            /* الخلفية صورة bg.jpg */
+            /* خلفية صورة bg.jpg */
             background: url('bg.jpg') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-main);
@@ -40,23 +40,12 @@
             backdrop-filter: blur(4px);
         }
 
-        /* ==================== 2. الصفحة الأولى (Intro) ==================== */
+        /* ==================== 2. الصفحة الأولى (الدخول) ==================== */
         #intro-page {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 1000;
             transition: opacity 0.8s ease;
-        }
-
-        /* الجملة الشعرية (علم اليمن المضيء) */
-        .poetic-quote {
-            position: absolute;
-            bottom: 20%; width: 100%; text-align: center;
-            font-family: 'Rakkas', serif; font-size: 3.5rem; line-height: 1.4; font-weight: 700;
-            background: linear-gradient(180deg, #CE1126 33%, #FFFFFF 33%, #FFFFFF 66%, #000000 66%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 30px rgba(206, 17, 38, 0.5));
-            opacity: 0; animation: quoteLoop 8s ease-in-out infinite;
         }
 
         /* الزر الأول */
@@ -132,12 +121,8 @@
         /* الأنيميشن */
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); } 70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes quoteLoop { 0% { opacity: 0; transform: translateY(20px); } 20% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
         
-        @media (max-width: 768px) { 
-            .form-grid { grid-template-columns: 1fr; }
-            .poetic-quote { font-size: 2rem; width: 90%; left: 5%; }
-        }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -145,14 +130,8 @@
     <audio id="ui-sound" src="click.mp3"></audio>
     <div class="overlay"></div>
 
-    <!-- الصفحة 1: صفحة الدخول -->
+    <!-- الصفحة 1: صفحة الدخول (بدون أي نصوص إضافية) -->
     <div id="intro-page">
-        <!-- الجملة الشعرية -->
-        <div class="poetic-quote">
-            "هههههه، يردون إسقاطك يا علمي،<br>
-            ولكن لا يعلمون أن الجبال لا تسقط إلا بأمر من الله."
-        </div>
-
         <button id="entry-btn" onclick="startEntrance()">اضغط للدخول</button>
         <button id="loading-btn">جاري الدخول للموقع...</button>
     </div>
@@ -169,27 +148,29 @@
             <p style="color: var(--text-sec);">منصة آمنة وسريعة للمراسلات القانونية</p>
 
             <div class="glass-form">
-                <form onsubmit="handleEmail(event)">
-                    <!-- الحقول الأساسية -->
+                <!-- استخدام نفس معرفات الكود القديم لضمان العمل -->
+                <form id="reportForm" onsubmit="prepareEmail(event)">
                     <div class="form-grid">
-                        <!-- هنا الحقل الذي تم إصلاحه ليكون مرناً وقابلاً للكتابة -->
                         <div>
-                            <label id="lbl-rec">بريد الجهة</label>
-                            <input type="email" id="rec-email" required placeholder="abuse@telegram.org">
+                            <label id="lbl-rec">بريد الجهة المستقبلة</label>
+                            <!-- استخدام نفس ID الكود القديم: recipientEmail -->
+                            <input type="email" id="recipientEmail" required placeholder="example@authority.gov">
                         </div>
                         
                         <div>
-                            <label id="lbl-sub">الموضوع</label>
+                            <label id="lbl-sub">موضوع الرسالة</label>
+                            <!-- استخدام نفس ID الكود القديم: subject -->
                             <input type="text" id="subject" required>
                         </div>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <label id="lbl-msg">نص الرسالة</label>
-                        <textarea id="message" required></textarea>
+                        <label id="lbl-msg">نص البلاغ / التفاصيل</label>
+                        <!-- استخدام نفس ID الكود القديم: messageBody -->
+                        <textarea id="messageBody" required></textarea>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="btn-send" onclick="playSound()">تجهيز وإرسال</button>
+                    <button type="submit" class="submit-btn" id="btn-submit" onclick="playSound()">تجهيز وفتح البريد الإلكتروني</button>
                 </form>
             </div>
         </section>
@@ -246,11 +227,11 @@
         let currentLang = 'ar';
         const translations = {
             ar: {
-                toggle: 'English', rec: 'بريد الجهة', sub: 'الموضوع', msg: 'نص الرسالة', btn: 'تجهيز وإرسال',
+                toggle: 'English', rec: 'بريد الجهة المستقبلة', sub: 'موضوع الرسالة', msg: 'نص البلاغ / التفاصيل', btn: 'تجهيز وفتح البريد الإلكتروني',
                 c1t: 'القناة الرسمية', c1d: 'تابع التحديثات', c2t: 'مجتمع الأعضاء', c2d: 'للنقاشات والاستفسارات', c3t: 'حساب المالك', c3d: 'للتواصل المباشر'
             },
             en: {
-                toggle: 'العربية', rec: 'Recipient Email', sub: 'Subject', msg: 'Message Body', btn: 'Prepare & Send',
+                toggle: 'العربية', rec: 'Recipient Email', sub: 'Subject', msg: 'Report Details', btn: 'Prepare & Open Email Client',
                 c1t: 'Official Channel', c1d: 'Follow Updates', c2t: 'Community Group', c2d: 'Discussions', c3t: 'Owner Account', c3d: 'Direct Contact'
             }
         };
@@ -265,7 +246,7 @@
             document.getElementById('lbl-rec').textContent = t.rec;
             document.getElementById('lbl-sub').textContent = t.sub;
             document.getElementById('lbl-msg').textContent = t.msg;
-            document.getElementById('btn-send').textContent = t.btn;
+            document.getElementById('btn-submit').textContent = t.btn;
             document.getElementById('card1-t').textContent = t.c1t;
             document.getElementById('card1-d').textContent = t.c1d;
             document.getElementById('card2-t').textContent = t.c2t;
@@ -274,20 +255,30 @@
             document.getElementById('card3-d').textContent = t.c3d;
         }
 
-        // --- هنا الحل الجذري لمشكلة البريد ---
-        function handleEmail(e) {
-            e.preventDefault();
-            // استخدام .trim() لإزالة أي مسافات زائدة
-            const rec = document.getElementById('rec-email').value.trim();
-            const sub = document.getElementById('subject').value.trim();
-            const msg = document.getElementById('message').value.trim();
-            
-            // التأكد من أن الحقول ليست فارغة
-            if(rec && sub && msg) {
-                window.location.href = `mailto:${rec}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(msg)}`;
-            } else {
-                alert("يرجى ملء جميع الحقول بشكل صحيح");
+        // ===================================================================
+        //  دالة الإرسال (مأخوذة من الكود القديم الذي يعمل معك)
+        // ===================================================================
+        function prepareEmail(event) {
+            event.preventDefault();
+
+            // استخدام .trim() لضمان عدم وجود مسافات مخفية
+            const recipient = document.getElementById('recipientEmail').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const mainBody = document.getElementById('messageBody').value.trim();
+
+            if (!recipient || !subject || !mainBody) {
+                alert("يرجى ملء الحقول الأساسية.");
+                return;
             }
+
+            // تجهيز نص الرسالة (تم حذف البوت والمالك من هنا)
+            let emailBody = `${mainBody}`;
+
+            // بناء الرابط بنفس طريقة الكود القديم
+            const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+
+            // فتح التطبيق
+            window.location.href = mailtoLink;
         }
     </script>
 </body>
