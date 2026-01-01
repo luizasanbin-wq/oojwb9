@@ -3,539 +3,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Report Portal | بوابة البلاغات</title>
-    
-    <!-- خطوط عربية وانجليزية فخمة -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <title>Equinox Portal | بوابة البلاغات</title>
+    <!-- استدعاء الخطوط: "Amiri" للجملة الشعرية، "Tajawal" للنصوص العربية، "Inter" للإنجليزية -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;500;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <style>
+        /* --- تعريف المتغيرات والألوان --- */
         :root {
-            --bg-dark: #020410;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --primary-blue: #3b82f6;
-            --neon-cyan: #06b6d4;
+            --bg-color: #050510;       /* خلفية داكنة جداً */
+            --accent: #3b82f6;         /* اللون الأزرق الأساسي */
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --font-ar: 'Tajawal', sans-serif;
-            --font-en: 'Inter', sans-serif;
+            --text-sec: #9ca3af;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; box-sizing: border-box;
+            outline: none; -webkit-tap-highlight-color: transparent;
         }
-
+        
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: var(--font-ar);
+            font-family: 'Tajawal', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
         }
 
-        /* --- Loading Screen --- */
-        #loading-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+        /* =========================================
+           1. شاشة المقدمة (Intro Section)
+           ========================================= */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000;
             z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.2s ease-in-out;
         }
 
-        #loading-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.8;
+        #intro-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.7; z-index: -1;
         }
 
-        /* --- Background Effects (The Blue Flow) --- */
-        .ambient-light {
-            position: fixed;
-            top: -20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120%;
-            height: 80vh;
-            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 60%);
-            filter: blur(80px);
-            z-index: -1;
-            pointer-events: none;
-            animation: pulseLight 8s infinite alternate;
+        /* طبقة تعتيم خفيفة لقراءة النصوص */
+        .overlay-dim {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 0;
         }
 
-        .blue-glow-shape {
-            position: fixed;
-            top: 20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
-            filter: blur(60px);
-            z-index: -1;
-            animation: floatShape 10s infinite ease-in-out;
-        }
-
-        /* --- Main Layout --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: none; /* Hidden until loaded */
-            opacity: 0;
-            animation: fadeInPage 1.5s forwards;
-        }
-
-        /* --- Navbar --- */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo span {
-            background: linear-gradient(90deg, #fff, var(--primary-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--card-border);
+        /* زر الدخول الشفاف */
+        #start-btn {
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .nav-btn:hover {
-            background: var(--primary-blue);
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-        }
-
-        /* --- Hero Section (The Form) --- */
-        .hero {
-            text-align: center;
-            padding: 60px 0;
-            position: relative;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .hero h1 span {
-            font-style: italic;
-            font-family: serif; /* محاكاة كلمة SaaS Solution المائلة في الصورة */
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: var(--text-muted);
+            padding: 15px 50px;
             font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-
-        /* Form Card */
-        .report-card {
-            background: rgba(10, 10, 20, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 700px;
-            margin: 0 auto;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
+            font-family: 'Tajawal', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+            letter-spacing: 1px;
+            animation: pulseBtn 2.5s infinite;
         }
         
-        /* تأثير خط مضيء أعلى الفورم */
-        .report-card::before {
-            content: '';
+        #start-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* الجملة الشعرية (الميزة المطلوبة) */
+        .poetic-quote {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+            bottom: 20%;
+            width: 90%;
+            text-align: center;
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            text-shadow: 0 2px 15px rgba(0,0,0,1);
+            z-index: 5;
+            opacity: 0;
+            /* أنيميشن الظهور والاختفاء المتدرج والمستمر */
+            animation: quoteLoop 7s ease-in-out infinite;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            text-align: right;
+        /* حاوية نص التحميل (مخفية في البداية) */
+        #loading-text-container {
+            display: none;
+            z-index: 10;
+            text-align: center;
         }
-        [dir="ltr"] .form-grid { text-align: left; }
 
-        .form-full {
-            grid-column: span 2;
-            text-align: right;
+        .typing-effect {
+            font-size: 1.4rem; color: #fff;
+            font-weight: bold;
+            display: inline-block;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+            animation: blinkCursor 0.8s infinite;
         }
-        [dir="ltr"] .form-full { text-align: left; }
 
-        label {
-            display: block;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-size: 0.85rem;
+        /* =========================================
+           2. المحتوى الرئيسي (Main Content)
+           ========================================= */
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 20px;
+            display: none; opacity: 0; /* مخفي حتى انتهاء الفيديو */
+            animation: pageEntry 1.5s forwards;
         }
+
+        /* الهيدر */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 30px 0; border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--accent); }
+        .logo-dot { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); }
+
+        .nav-btn {
+            background: transparent; border: 1px solid var(--glass-border); color: #fff;
+            padding: 8px 25px; border-radius: 30px; cursor: pointer; transition: 0.3s;
+            font-family: 'Inter', sans-serif; font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* منطقة الهيرو والنصوص المتحركة */
+        .hero { text-align: center; padding: 70px 0; position: relative; }
+
+        /* الأنيميشن المطلوب للنصوص (يظهر، يصعد، يختفي، يعود) */
+        .animated-title {
+            font-size: 3rem; font-weight: 800; margin-bottom: 20px;
+            background: linear-gradient(to top, #fff 40%, #999 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: textLoop 6s ease-in-out infinite;
+        }
+
+        .animated-desc {
+            color: var(--text-sec); font-size: 1.1rem; max-width: 600px; margin: 0 auto 50px;
+            opacity: 0;
+            animation: textLoop 6s ease-in-out infinite;
+            animation-delay: 0.3s; /* تأخير بسيط عن العنوان */
+        }
+
+        /* كارت النموذج الزجاجي */
+        .glass-form {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 750px; margin: 0 auto;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
+            /* ظهور مرة واحدة عند دخول الموقع */
+            animation: slideUpForm 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.5s;
+            opacity: 0; transform: translateY(30px);
+        }
+
+        /* خط ليزر متحرك فوق الفورم */
+        .glass-form::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: laserScan 4s infinite linear;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        
+        label { display: block; color: var(--text-sec); margin-bottom: 10px; font-size: 0.9rem; font-weight: 500; text-align: right; }
+        [dir="ltr"] label { text-align: left; }
 
         input, textarea {
             width: 100%;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--card-border);
-            padding: 12px 15px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            padding: 14px;
+            border-radius: 12px;
             color: #fff;
-            font-family: inherit;
-            transition: 0.3s;
+            font-family: inherit; font-size: 1rem;
+            transition: all 0.3s;
         }
 
         input:focus, textarea:focus {
-            border-color: var(--primary-blue);
-            background: rgba(59, 130, 246, 0.05);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.08);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
         }
 
-        textarea { resize: vertical; min-height: 100px; }
+        textarea { min-height: 140px; resize: vertical; }
 
-        .cta-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s, box-shadow 0.3s;
-            display: inline-block;
+        .submit-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #fff, #e0e0e0);
+            color: #000; border: none; border-radius: 50px;
+            font-weight: 800; font-size: 1.1rem;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
+            margin-top: 10px;
         }
 
-        .cta-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255,255,255,0.4);
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
         }
 
-        /* --- The 3 Cards (Socials) --- */
-        /* هذه تحاكي البطاقات الثلاث السفلية في الصورة */
-        .cards-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 80px;
-            margin-bottom: 50px;
+        /* =========================================
+           3. البطاقات السفلية (Social Cards)
+           ========================================= */
+        .cards-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px; margin-top: 80px; padding-bottom: 50px;
         }
 
-        .glass-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 30px;
-            text-align: center; /* سنترت المحتوى */
-            cursor: pointer;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
+        .real-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
             text-decoration: none;
-            display: block;
+            transition: all 0.4s ease;
+            position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        .glass-card:hover {
-            border-color: var(--primary-blue);
+        .real-card:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
             transform: translateY(-10px);
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, rgba(0,0,0,0) 100%);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(59, 130, 246, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: var(--primary-blue);
-            margin: 0 auto 20px; /* سنترت الأيقونة */
-            transition: 0.3s;
+        /* تنسيق الأيقونات SVG */
+        .icon-box {
+            width: 65px; height: 65px;
+            margin-bottom: 20px;
+            fill: var(--text-sec);
+            transition: all 0.4s ease;
+            filter: drop-shadow(0 0 0 transparent);
         }
 
-        .glass-card:hover .card-icon {
-            background: var(--primary-blue);
-            color: #fff;
-            box-shadow: 0 0 20px var(--primary-blue);
+        .real-card:hover .icon-box {
+            fill: var(--accent);
+            filter: drop-shadow(0 0 10px var(--accent));
+            transform: scale(1.1);
         }
 
-        .glass-card h3 {
-            color: #fff;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+        .real-card h3 { color: #fff; margin-bottom: 8px; font-size: 1.25rem; }
+        .real-card p { color: var(--text-sec); font-size: 0.9rem; transition: color 0.3s; }
+        .real-card:hover p { color: #ccc; }
+
+        /* =========================================
+           4. الأنيميشن (Keyframes)
+           ========================================= */
+        /* نبض الزر */
+        @keyframes pulseBtn {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-        .glass-card p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
+        /* ظهور الجملة واختفاؤها بتدرج */
+        @keyframes quoteLoop {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
         }
 
-        /* --- Animations --- */
-        @keyframes fadeInPage {
-            to { opacity: 1; }
+        /* وميض مؤشر الكتابة */
+        @keyframes blinkCursor { 50% { border-color: transparent; } }
+
+        /* ظهور الصفحة الرئيسية */
+        @keyframes pageEntry { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        /* حركة العناوين المستمرة (تظهر من تحت وتختفي فوق) */
+        @keyframes textLoop {
+            0% { opacity: 0; transform: translateY(30px); }
+            20% { opacity: 1; transform: translateY(0); }
+            70% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 0; transform: translateY(30px); }
         }
 
-        @keyframes pulseLight {
-            0% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            100% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
-        }
+        /* حركة الفورم للدخول مرة واحدة */
+        @keyframes slideUpForm { to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes floatShape {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, 30px); }
-        }
+        /* حركة الليزر */
+        @keyframes laserScan { 0% { left: -100%; } 100% { left: 100%; } }
 
-        /* --- Responsive --- */
+        /* التجاوب مع الجوال */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
             .form-grid { grid-template-columns: 1fr; }
-            .form-full { grid-column: span 1; }
-            .cards-section { grid-template-columns: 1fr; }
+            .animated-title { font-size: 2rem; }
+            .glass-form { padding: 25px; }
+            .poetic-quote { font-size: 1.2rem; bottom: 15%; width: 95%; }
+            #start-btn { padding: 12px 30px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- مؤثر صوتي -->
-    <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2995536418.mp3"></audio>
+    <!-- =========================================
+         عناصر الصوت والفيديو
+    ========================================= -->
+    <audio id="ui-sound" src="click.mp3"></audio>
 
-    <!-- 1. شاشة التحميل بالفيديو -->
-    <div id="loading-screen">
-        <!-- فيديو تجريدي أزرق يشبه تموجات الصورة -->
-        <video id="loading-video" autoplay muted playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-blue-liquid-movement-32863-large.mp4" type="video/mp4">
+    <!-- شاشة المقدمة -->
+    <div id="intro-screen">
+        <div class="overlay-dim"></div>
+        
+        <!-- الفيديو يبدأ صامتاً، ويتم تفعيل الصوت برمجياً -->
+        <video id="intro-video" muted loop playsinline autoplay>
+            <source src="intro.mp4" type="video/mp4">
         </video>
+
+        <!-- الجملة الشعرية (تظهر وتختفي باستمرار) -->
+        <div class="poetic-quote">
+            "هههههه، يردون إسقاطك يا علمي،<br>
+            ولكن لا يعلمون أن الجبال لا تسقط إلا بأمر من الله."
+        </div>
+
+        <!-- زر البدء (يختفي عند الضغط) -->
+        <button id="start-btn" onclick="enterSite()">إضغط للدخول إلى النظام</button>
+
+        <!-- نص التحميل (يظهر بعد الضغط) -->
+        <div id="loading-text-container">
+            <div class="typing-effect">جاري تحميل صفحة إرسال البلاغات...</div>
+        </div>
     </div>
 
-    <!-- تأثيرات الخلفية -->
-    <div class="ambient-light"></div>
-    <div class="blue-glow-shape"></div>
-
-    <!-- 2. محتوى الموقع -->
-    <div class="container" id="app-content">
-        
+    <!-- =========================================
+         الموقع الرئيسي (يظهر بعد 13 ثانية)
+    ========================================= -->
+    <div class="container" id="main-content">
         <!-- الهيدر -->
         <nav>
             <div class="logo">
-                <div style="width:20px; height:20px; background:var(--primary-blue); border-radius:50%; box-shadow: 0 0 10px var(--primary-blue);"></div>
-                Equinox <span>Report</span>
+                <div class="logo-dot"></div>
+                EQUINOX <span>PORTAL</span>
             </div>
-            <button class="nav-btn" onclick="playSound(); toggleLanguage()" id="lang-toggle">English</button>
+            <button class="nav-btn" onclick="playSound(); toggleLang()" id="lang-btn">English</button>
         </nav>
 
-        <!-- القسم الرئيسي (نموذج الإبلاغ في المنتصف) -->
+        <!-- القسم الرئيسي -->
         <section class="hero">
-            <h1 id="hero-title">نظام البلاغات <br><span>الاحترافي والآمن</span></h1>
-            <p id="hero-desc">قم بصياغة وإرسال البلاغات القانونية والرسمية بطريقة منظمة مباشرة من بريدك الشخصي دون تدخل طرف ثالث.</p>
+            <!-- العناوين المتحركة (تدرج مستمر) -->
+            <h1 class="animated-title" id="page-title">نظام البلاغات الرسمي</h1>
+            <p class="animated-desc" id="page-desc">منصة آمنة لتجهيز المراسلات القانونية بشكل احترافي ومباشر</p>
 
-            <!-- كارت النموذج -->
-            <div class="report-card">
-                <form onsubmit="prepareEmail(event)">
+            <!-- النموذج -->
+            <div class="glass-form">
+                <form onsubmit="handleEmail(event)">
                     <div class="form-grid">
                         <div>
-                            <label id="lbl-recipient">بريد الجهة</label>
-                            <input type="email" id="recipientEmail" placeholder="support@company.com" required>
+                            <label id="lbl-rec">بريد الجهة</label>
+                            <input type="email" id="rec-email" required placeholder="support@company.com">
                         </div>
                         <div>
-                            <label id="lbl-subject">الموضوع</label>
-                            <input type="text" id="subject" placeholder="..." required>
+                            <label id="lbl-sub">الموضوع</label>
+                            <input type="text" id="subject" required>
                         </div>
                     </div>
                     
                     <div class="form-grid">
                         <div>
-                            <label id="lbl-botUser">يوزر البوت (إن وجد)</label>
-                            <input type="text" id="botUser" style="direction: ltr;">
+                            <label id="lbl-bot">يوزر البوت</label>
+                            <input type="text" id="bot-user" style="direction: ltr; font-family: 'Inter', sans-serif;">
                         </div>
                         <div>
-                            <label id="lbl-botOwner">يوزر المالك</label>
-                            <input type="text" id="botOwner" style="direction: ltr;">
+                            <label id="lbl-owner">يوزر المالك</label>
+                            <input type="text" id="owner-user" style="direction: ltr; font-family: 'Inter', sans-serif;">
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label id="lbl-body">نص الرسالة</label>
-                        <textarea id="messageBody" required></textarea>
+                    <div style="margin-bottom: 25px;">
+                        <label id="lbl-msg">نص الرسالة</label>
+                        <textarea id="message" required></textarea>
                     </div>
 
-                    <button type="submit" class="cta-btn" id="btn-submit" onclick="playSound()">تجهيز وإرسال</button>
+                    <button type="submit" class="submit-btn" id="btn-send" onclick="playSound()">تجهيز وإرسال</button>
                 </form>
             </div>
         </section>
 
-        <!-- 3. البطاقات الثلاث (الحساب، القناة، الجروب) -->
-        <!-- تحاكي البطاقات السفلية في الصورة تماماً -->
-        <section class="cards-section">
+        <!-- الروابط الخاصة (الأزرار السفلية) -->
+        <div class="cards-container">
             
-            <!-- بطاقة القناة -->
-            <a href="https://t.me/T_V9RN" target="_blank" class="glass-card" onclick="playSound()">
-                <div class="card-icon">📢</div>
-                <h3 id="card1-title">القناة الرسمية</h3>
-                <p id="card1-desc">تابع آخر التحديثات والأخبار الحصرية عبر قناتنا الرسمية.</p>
+            <!-- زر القناة (الرابط الخاص بك) -->
+            <a href="https://t.me/T_V9RN" target="_blank" class="real-card" onclick="playSound()">
+                <svg class="icon-box" viewBox="0 0 24 24">
+                    <path d="M12,3L4,9H2V15H4L12,21V3M16.5,12C16.5,10.23 15.48,8.71 14,7.97V16.02C15.48,15.29 16.5,13.77 16.5,12M19,12C19,12.9 18.82,13.76 18.5,14.56L19.92,15.97C20.6,14.81 21,13.46 21,12C21,7.72 17.5,4.28 14,4V6C16.76,6.28 19,8.88 19,12Z" />
+                </svg>
+                <h3 id="card1-t">القناة الرسمية</h3>
+                <p id="card1-d">تابع آخر الأخبار</p>
             </a>
 
-            <!-- بطاقة المجموعة -->
-            <a href="https://t.me/ZEX9X" target="_blank" class="glass-card" onclick="playSound()">
-                <div class="card-icon">👥</div>
-                <h3 id="card2-title">مجتمع المناقشة</h3>
-                <p id="card2-desc">انضم إلى مجتمعنا للنقاش وطرح الاستفسارات مع الأعضاء.</p>
+            <!-- زر المجموعة (الرابط الخاص بك) -->
+            <a href="https://t.me/ZEX9X" target="_blank" class="real-card" onclick="playSound()">
+                <svg class="icon-box" viewBox="0 0 24 24">
+                    <path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,6.38 7.7,5.15 10,5.15C10.28,5.15 10.5,5.16 10.8,5.18C10.5,5.69 10.26,6.27 10.12,6.88C10.08,7.05 10.04,7.23 10,7.42C9.4,7.66 8.95,8.19 8.8,8.8C8.65,9.45 8.82,10.13 9.25,10.63C8.6,10.4 8,9.75 7.8,9C7.36,9.15 7,9.54 7,10A1,1 0 0,0 8,11H8.1C7.57,11.05 7.14,11.38 6.94,11.86C6.73,12.34 6.8,12.9 7.12,13.31C5.79,13.56 3.65,14.4 3.5,15.5V19H10V17.5H5.09C5.57,16.71 8.35,15.75 12,15.75C12.39,15.75 12.77,15.77 13.14,15.8C13.25,16.29 13.46,16.74 13.74,17.13C13.19,17.21 12.61,17.25 12,17.25C11.38,17.25 10.83,17.29 10.33,17.37C11.08,18.3 12.44,19 14,19H20.5V15.5C20.35,14.4 18.21,13.56 16.88,13.31C17.2,12.9 17.27,12.34 17.06,11.86C16.86,11.38 16.43,11.05 15.9,11H16A1,1 0 0,0 17,10C17,9.54 16.64,9.15 16.2,9C16,9.75 15.4,10.4 14.75,10.63C15.18,10.13 15.35,9.45 15.2,8.8C15.05,8.19 14.6,7.66 14,7.42C13.96,7.23 13.92,7.05 13.88,6.88C13.74,6.27 13.5,5.69 13.2,5.18C13.5,5.16 13.72,5.15 14,5.15C16.3,5.15 18.44,6.38 19,8H19.05L19,8.03V8H19Z" />
+                </svg>
+                <h3 id="card2-t">مجتمع الأعضاء</h3>
+                <p id="card2-d">للنقاشات والاستفسارات</p>
             </a>
 
-            <!-- بطاقة الحساب -->
-            <a href="https://t.me/O_I_I3" target="_blank" class="glass-card" onclick="playSound()">
-                <div class="card-icon">💎</div>
-                <h3 id="card3-title">حساب المالك</h3>
-                <p id="card3-desc">للتواصل المباشر مع المطور أو إدارة البوت.</p>
+            <!-- زر الحساب (الرابط الخاص بك) -->
+            <a href="https://t.me/O_I_I3" target="_blank" class="real-card" onclick="playSound()">
+                <svg class="icon-box" viewBox="0 0 24 24">
+                    <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+                </svg>
+                <h3 id="card3-t">حساب المالك</h3>
+                <p id="card3-d">للتواصل المباشر</p>
             </a>
 
-        </section>
+        </div>
 
-        <footer style="text-align: center; color: #555; padding-bottom: 20px; font-size: 0.8rem;">
-            &copy; 2025 Equinox System. All rights reserved.
+        <footer style="text-align: center; color: #555; margin-top: 20px; font-size: 0.8rem; font-family: 'Inter', sans-serif;">
+            &copy; 2025 Equinox Portal System.
         </footer>
     </div>
 
+    <!-- =========================================
+         الجافاسكريبت (Logic)
+    ========================================= -->
     <script>
-        // 1. منطق شاشة التحميل
-        window.onload = function() {
-            setTimeout(() => {
-                const loader = document.getElementById('loading-screen');
-                const content = document.getElementById('app-content');
-                
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    content.style.display = 'block';
-                }, 1000);
-            }, 5000); // 5 ثواني
-        };
+        // دالة التحكم في الدخول (Intro Logic)
+        function enterSite() {
+            const video = document.getElementById('intro-video');
+            const btn = document.getElementById('start-btn');
+            const loadText = document.getElementById('loading-text-container');
+            const screen = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
 
-        // 2. الصوت
-        function playSound() {
-            const audio = document.getElementById("clickSound");
-            audio.currentTime = 0;
-            audio.play().catch(() => {});
+            // 1. إخفاء الزر
+            btn.style.display = 'none';
+
+            // 2. تشغيل الفيديو مع الصوت (Unmute)
+            video.muted = false;
+            video.currentTime = 0; // إعادة للبداية
+            video.play().catch(e => console.log("Video play error:", e));
+
+            // 3. إظهار نص التحميل
+            loadText.style.display = 'block';
+
+            // 4. الانتظار لمدة 13 ثانية ثم إظهار الموقع
+            setTimeout(() => {
+                // إخفاء شاشة البداية بتأثير Fade Out
+                screen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    screen.style.display = 'none'; // إزالة الشاشة
+                    main.style.display = 'block';  // إظهار الموقع الرئيسي
+                }, 1200); // وقت الأنيميشن للاختفاء
+
+            }, 13000); // 13000 مللي ثانية = 13 ثانية
         }
 
-        // 3. الترجمة واللغات
+        // دالة تشغيل صوت النقر
+        function playSound() {
+            const audio = document.getElementById('ui-sound');
+            if(audio) {
+                audio.currentTime = 0;
+                audio.play().catch(() => {});
+            }
+        }
+
+        // دالة تبديل اللغة
+        let currentLang = 'ar';
         const translations = {
             ar: {
-                title: 'نظام البلاغات <br><span>الاحترافي والآمن</span>',
-                desc: 'قم بصياغة وإرسال البلاغات القانونية والرسمية بطريقة منظمة مباشرة من بريدك الشخصي.',
                 toggle: 'English',
-                lblRecipient: "بريد الجهة",
-                lblSubject: "الموضوع",
-                lblBotUser: "يوزر البوت (المخالف)",
-                lblBotOwner: "يوزر المالك",
-                lblBody: "نص الرسالة",
-                btnSubmit: "تجهيز وإرسال",
-                cards: {
-                    c1t: "القناة الرسمية", c1d: "تابع آخر التحديثات والأخبار الحصرية.",
-                    c2t: "مجتمع المناقشة", c2d: "انضم للنقاش وطرح الاستفسارات.",
-                    c3t: "حساب المالك", c3d: "للتواصل المباشر مع المطور."
-                }
+                title: 'نظام البلاغات الرسمي',
+                desc: 'منصة آمنة لتجهيز المراسلات القانونية بشكل احترافي ومباشر',
+                rec: 'بريد الجهة', sub: 'الموضوع',
+                bot: 'يوزر البوت', owner: 'يوزر المالك',
+                msg: 'نص الرسالة', btn: 'تجهيز وإرسال',
+                c1t: 'القناة الرسمية', c1d: 'تابع آخر الأخبار',
+                c2t: 'مجتمع الأعضاء', c2d: 'للنقاشات والاستفسارات',
+                c3t: 'حساب المالك', c3d: 'للتواصل المباشر'
             },
             en: {
-                title: 'Transform Your <br><span>Reporting Process</span>',
-                desc: 'Streamline your legal reporting securely and directly from your personal email client.',
                 toggle: 'العربية',
-                lblRecipient: "Recipient Email",
-                lblSubject: "Subject",
-                lblBotUser: "Bot User (Target)",
-                lblBotOwner: "Bot Owner",
-                lblBody: "Message Body",
-                btnSubmit: "Start Reporting",
-                cards: {
-                    c1t: "Official Channel", c1d: "Follow the latest news and updates.",
-                    c2t: "Community Group", c2d: "Join the discussion with members.",
-                    c3t: "Owner Account", c3d: "Contact the developer directly."
-                }
+                title: 'Official Reporting System',
+                desc: 'Secure platform to prepare legal correspondence professionally',
+                rec: 'Recipient Email', sub: 'Subject',
+                bot: 'Bot Username', owner: 'Owner Username',
+                msg: 'Message Body', btn: 'Prepare & Send',
+                c1t: 'Official Channel', c1d: 'Follow Latest News',
+                c2t: 'Community Group', c2d: 'Discussions & Help',
+                c3t: 'Owner Account', c3d: 'Direct Contact'
             }
         };
 
-        let currentLang = 'ar';
-
-        function toggleLanguage() {
+        function toggleLang() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             const t = translations[currentLang];
-            
-            // تحديث الاتجاه
-            document.documentElement.setAttribute('lang', currentLang);
-            document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-            document.body.style.fontFamily = currentLang === 'ar' ? "'Tajawal', sans-serif" : "'Inter', sans-serif";
+            const html = document.documentElement;
 
-            // تحديث النصوص
-            document.getElementById('hero-title').innerHTML = t.title;
-            document.getElementById('hero-desc').textContent = t.desc;
-            document.getElementById('lang-toggle').textContent = t.toggle;
-            
-            document.getElementById('lbl-recipient').textContent = t.lblRecipient;
-            document.getElementById('lbl-subject').textContent = t.lblSubject;
-            document.getElementById('lbl-botUser').textContent = t.lblBotUser;
-            document.getElementById('lbl-botOwner').textContent = t.lblBotOwner;
-            document.getElementById('lbl-body').textContent = t.lblBody;
-            document.getElementById('btn-submit').textContent = t.btnSubmit;
+            html.setAttribute('lang', currentLang);
+            html.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
 
-            // تحديث الكروت
-            document.getElementById('card1-title').textContent = t.cards.c1t;
-            document.getElementById('card1-desc').textContent = t.cards.c1d;
-            document.getElementById('card2-title').textContent = t.cards.c2t;
-            document.getElementById('card2-desc').textContent = t.cards.c2d;
-            document.getElementById('card3-title').textContent = t.cards.c3t;
-            document.getElementById('card3-desc').textContent = t.cards.c3d;
+            document.getElementById('lang-btn').textContent = t.toggle;
+            document.getElementById('page-title').textContent = t.title;
+            document.getElementById('page-desc').textContent = t.desc;
+            document.getElementById('lbl-rec').textContent = t.rec;
+            document.getElementById('lbl-sub').textContent = t.sub;
+            document.getElementById('lbl-bot').textContent = t.bot;
+            document.getElementById('lbl-owner').textContent = t.owner;
+            document.getElementById('lbl-msg').textContent = t.msg;
+            document.getElementById('btn-send').textContent = t.btn;
+            
+            document.getElementById('card1-t').textContent = t.c1t;
+            document.getElementById('card1-d').textContent = t.c1d;
+            document.getElementById('card2-t').textContent = t.c2t;
+            document.getElementById('card2-d').textContent = t.c2d;
+            document.getElementById('card3-t').textContent = t.c3t;
+            document.getElementById('card3-d').textContent = t.c3d;
         }
 
-        // 4. إرسال الإيميل
-        function prepareEmail(event) {
-            event.preventDefault();
-            const recipient = document.getElementById('recipientEmail').value;
-            const subject = document.getElementById('subject').value;
-            const body = document.getElementById('messageBody').value;
-            const botUser = document.getElementById('botUser').value;
-            const botOwner = document.getElementById('botOwner').value;
+        // دالة تجهيز البريد الإلكتروني (Mailto)
+        function handleEmail(e) {
+            e.preventDefault();
+            const rec = document.getElementById('rec-email').value;
+            const sub = document.getElementById('subject').value;
+            const msg = document.getElementById('message').value;
+            const bot = document.getElementById('bot-user').value;
+            const own = document.getElementById('owner-user').value;
 
-            let finalBody = body + "\n\n----------------\n";
-            if(botUser) finalBody += `Target Bot: ${botUser}\n`;
-            if(botOwner) finalBody += `Owner ID: ${botOwner}\n`;
+            let finalMsg = msg + "\n\n----------------\n";
+            if (currentLang === 'ar') {
+                finalMsg += "بيانات إضافية للبلاغ:\n";
+                if(bot) finalMsg += `- يوزر البوت: ${bot}\n`;
+                if(own) finalMsg += `- يوزر المالك: ${own}\n`;
+            } else {
+                finalMsg += "Additional Report Info:\n";
+                if(bot) finalMsg += `- Bot User: ${bot}\n`;
+                if(own) finalMsg += `- Owner User: ${own}\n`;
+            }
 
-            window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(finalBody)}`;
+            // فتح تطبيق الإيميل
+            window.location.href = `mailto:${rec}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(finalMsg)}`;
         }
     </script>
 </body>
