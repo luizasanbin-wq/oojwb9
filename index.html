@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equinox Portal | بوابة البلاغات</title>
-    <!-- استدعاء الخطوط: "Amiri" للجملة الشعرية، "Tajawal" للنصوص العربية، "Inter" للإنجليزية -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;500;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- استدعاء الخطوط: 
+         - "Rakkas" للجملة الشعرية (فخم جداً)
+         - "Tajawal" للنصوص العربية
+         - "Inter" للإنجليزية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Rakkas&family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
     
     <style>
         /* --- تعريف المتغيرات والألوان --- */
         :root {
-            --bg-color: #050510;       /* خلفية داكنة جداً */
-            --accent: #3b82f6;         /* اللون الأزرق الأساسي */
+            --bg-color: #050510;       /* خلفية داكنة */
+            --accent: #3b82f6;         /* أزرق فخم */
             --accent-glow: rgba(59, 130, 246, 0.4);
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
@@ -48,10 +54,9 @@
             object-fit: cover; opacity: 0.7; z-index: -1;
         }
 
-        /* طبقة تعتيم خفيفة لقراءة النصوص */
         .overlay-dim {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.9) 100%);
             z-index: 0;
         }
 
@@ -79,24 +84,23 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        /* الجملة الشعرية (الميزة المطلوبة) */
+        /* الجملة الشعرية (الخط الجديد الفخم: Rakkas) */
         .poetic-quote {
             position: absolute;
             bottom: 20%;
             width: 90%;
             text-align: center;
-            font-family: 'Amiri', serif;
-            font-size: 1.5rem;
-            line-height: 1.8;
-            color: #e0e0e0;
-            text-shadow: 0 2px 15px rgba(0,0,0,1);
+            font-family: 'Rakkas', serif; /* استخدام الخط الجديد */
+            font-size: 2rem; /* تكبير الخط لأنه مزخرف */
+            line-height: 1.6;
+            color: #f1f1f1;
+            text-shadow: 0 4px 20px rgba(0,0,0,1); /* ظل قوي للنص */
             z-index: 5;
             opacity: 0;
-            /* أنيميشن الظهور والاختفاء المتدرج والمستمر */
+            /* أنيميشن الظهور والاختفاء المتدرج */
             animation: quoteLoop 7s ease-in-out infinite;
         }
 
-        /* حاوية نص التحميل (مخفية في البداية) */
         #loading-text-container {
             display: none;
             z-index: 10;
@@ -117,11 +121,10 @@
            ========================================= */
         .container {
             max-width: 1200px; margin: 0 auto; padding: 20px;
-            display: none; opacity: 0; /* مخفي حتى انتهاء الفيديو */
+            display: none; opacity: 0;
             animation: pageEntry 1.5s forwards;
         }
 
-        /* الهيدر */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 30px 0; border-bottom: 1px solid var(--glass-border);
@@ -138,10 +141,8 @@
         }
         .nav-btn:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* منطقة الهيرو والنصوص المتحركة */
         .hero { text-align: center; padding: 70px 0; position: relative; }
 
-        /* الأنيميشن المطلوب للنصوص (يظهر، يصعد، يختفي، يعود) */
         .animated-title {
             font-size: 3rem; font-weight: 800; margin-bottom: 20px;
             background: linear-gradient(to top, #fff 40%, #999 100%);
@@ -154,10 +155,9 @@
             color: var(--text-sec); font-size: 1.1rem; max-width: 600px; margin: 0 auto 50px;
             opacity: 0;
             animation: textLoop 6s ease-in-out infinite;
-            animation-delay: 0.3s; /* تأخير بسيط عن العنوان */
+            animation-delay: 0.3s;
         }
 
-        /* كارت النموذج الزجاجي */
         .glass-form {
             background: var(--glass-bg);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -167,12 +167,10 @@
             max-width: 750px; margin: 0 auto;
             box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             position: relative; overflow: hidden;
-            /* ظهور مرة واحدة عند دخول الموقع */
             animation: slideUpForm 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.5s;
             opacity: 0; transform: translateY(30px);
         }
 
-        /* خط ليزر متحرك فوق الفورم */
         .glass-form::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent), transparent);
@@ -185,19 +183,14 @@
         [dir="ltr"] label { text-align: left; }
 
         input, textarea {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--glass-border);
-            padding: 14px;
-            border-radius: 12px;
-            color: #fff;
-            font-family: inherit; font-size: 1rem;
+            width: 100%; background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border); padding: 14px;
+            border-radius: 12px; color: #fff; font-family: inherit; font-size: 1rem;
             transition: all 0.3s;
         }
 
         input:focus, textarea:focus {
-            border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.08);
+            border-color: var(--accent); background: rgba(59, 130, 246, 0.08);
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
         }
 
@@ -212,14 +205,8 @@
             margin-top: 10px;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
-        }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2); }
 
-        /* =========================================
-           3. البطاقات السفلية (Social Cards)
-           ========================================= */
         .cards-container {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 25px; margin-top: 80px; padding-bottom: 50px;
@@ -227,35 +214,25 @@
 
         .real-card {
             background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            text-decoration: none;
-            transition: all 0.4s ease;
-            position: relative;
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 30px 20px; text-align: center; text-decoration: none;
+            transition: all 0.4s ease; position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .real-card:hover {
-            border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.05);
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            border-color: var(--accent); background: rgba(59, 130, 246, 0.05);
+            transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
-        /* تنسيق الأيقونات SVG */
         .icon-box {
-            width: 65px; height: 65px;
-            margin-bottom: 20px;
-            fill: var(--text-sec);
-            transition: all 0.4s ease;
+            width: 65px; height: 65px; margin-bottom: 20px;
+            fill: var(--text-sec); transition: all 0.4s ease;
             filter: drop-shadow(0 0 0 transparent);
         }
 
         .real-card:hover .icon-box {
-            fill: var(--accent);
-            filter: drop-shadow(0 0 10px var(--accent));
+            fill: var(--accent); filter: drop-shadow(0 0 10px var(--accent));
             transform: scale(1.1);
         }
 
@@ -263,17 +240,13 @@
         .real-card p { color: var(--text-sec); font-size: 0.9rem; transition: color 0.3s; }
         .real-card:hover p { color: #ccc; }
 
-        /* =========================================
-           4. الأنيميشن (Keyframes)
-           ========================================= */
-        /* نبض الزر */
+        /* Keyframes */
         @keyframes pulseBtn {
             0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); }
             70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-        /* ظهور الجملة واختفاؤها بتدرج */
         @keyframes quoteLoop {
             0% { opacity: 0; transform: translateY(20px); }
             20% { opacity: 1; transform: translateY(0); }
@@ -281,13 +254,9 @@
             100% { opacity: 0; transform: translateY(-20px); }
         }
 
-        /* وميض مؤشر الكتابة */
         @keyframes blinkCursor { 50% { border-color: transparent; } }
-
-        /* ظهور الصفحة الرئيسية */
         @keyframes pageEntry { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* حركة العناوين المستمرة (تظهر من تحت وتختفي فوق) */
         @keyframes textLoop {
             0% { opacity: 0; transform: translateY(30px); }
             20% { opacity: 1; transform: translateY(0); }
@@ -296,58 +265,49 @@
             100% { opacity: 0; transform: translateY(30px); }
         }
 
-        /* حركة الفورم للدخول مرة واحدة */
         @keyframes slideUpForm { to { opacity: 1; transform: translateY(0); } }
-
-        /* حركة الليزر */
         @keyframes laserScan { 0% { left: -100%; } 100% { left: 100%; } }
 
-        /* التجاوب مع الجوال */
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
             .animated-title { font-size: 2rem; }
             .glass-form { padding: 25px; }
-            .poetic-quote { font-size: 1.2rem; bottom: 15%; width: 95%; }
+            .poetic-quote { font-size: 1.5rem; bottom: 15%; width: 95%; }
             #start-btn { padding: 12px 30px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- =========================================
-         عناصر الصوت والفيديو
-    ========================================= -->
+    <!-- ملفات الصوت -->
     <audio id="ui-sound" src="click.mp3"></audio>
 
     <!-- شاشة المقدمة -->
     <div id="intro-screen">
         <div class="overlay-dim"></div>
         
-        <!-- الفيديو يبدأ صامتاً، ويتم تفعيل الصوت برمجياً -->
+        <!-- الفيديو -->
         <video id="intro-video" muted loop playsinline autoplay>
             <source src="intro.mp4" type="video/mp4">
         </video>
 
-        <!-- الجملة الشعرية (تظهر وتختفي باستمرار) -->
+        <!-- الجملة الشعرية (بالخط الجديد الفخم) -->
         <div class="poetic-quote">
             "هههههه، يردون إسقاطك يا علمي،<br>
             ولكن لا يعلمون أن الجبال لا تسقط إلا بأمر من الله."
         </div>
 
-        <!-- زر البدء (يختفي عند الضغط) -->
+        <!-- زر الدخول -->
         <button id="start-btn" onclick="enterSite()">إضغط للدخول إلى النظام</button>
 
-        <!-- نص التحميل (يظهر بعد الضغط) -->
+        <!-- نص التحميل -->
         <div id="loading-text-container">
             <div class="typing-effect">جاري تحميل صفحة إرسال البلاغات...</div>
         </div>
     </div>
 
-    <!-- =========================================
-         الموقع الرئيسي (يظهر بعد 13 ثانية)
-    ========================================= -->
+    <!-- المحتوى الرئيسي -->
     <div class="container" id="main-content">
-        <!-- الهيدر -->
         <nav>
             <div class="logo">
                 <div class="logo-dot"></div>
@@ -356,13 +316,10 @@
             <button class="nav-btn" onclick="playSound(); toggleLang()" id="lang-btn">English</button>
         </nav>
 
-        <!-- القسم الرئيسي -->
         <section class="hero">
-            <!-- العناوين المتحركة (تدرج مستمر) -->
             <h1 class="animated-title" id="page-title">نظام البلاغات الرسمي</h1>
             <p class="animated-desc" id="page-desc">منصة آمنة لتجهيز المراسلات القانونية بشكل احترافي ومباشر</p>
 
-            <!-- النموذج -->
             <div class="glass-form">
                 <form onsubmit="handleEmail(event)">
                     <div class="form-grid">
@@ -397,10 +354,9 @@
             </div>
         </section>
 
-        <!-- الروابط الخاصة (الأزرار السفلية) -->
+        <!-- الروابط الخاصة -->
         <div class="cards-container">
             
-            <!-- زر القناة (الرابط الخاص بك) -->
             <a href="https://t.me/T_V9RN" target="_blank" class="real-card" onclick="playSound()">
                 <svg class="icon-box" viewBox="0 0 24 24">
                     <path d="M12,3L4,9H2V15H4L12,21V3M16.5,12C16.5,10.23 15.48,8.71 14,7.97V16.02C15.48,15.29 16.5,13.77 16.5,12M19,12C19,12.9 18.82,13.76 18.5,14.56L19.92,15.97C20.6,14.81 21,13.46 21,12C21,7.72 17.5,4.28 14,4V6C16.76,6.28 19,8.88 19,12Z" />
@@ -409,7 +365,6 @@
                 <p id="card1-d">تابع آخر الأخبار</p>
             </a>
 
-            <!-- زر المجموعة (الرابط الخاص بك) -->
             <a href="https://t.me/ZEX9X" target="_blank" class="real-card" onclick="playSound()">
                 <svg class="icon-box" viewBox="0 0 24 24">
                     <path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,6.38 7.7,5.15 10,5.15C10.28,5.15 10.5,5.16 10.8,5.18C10.5,5.69 10.26,6.27 10.12,6.88C10.08,7.05 10.04,7.23 10,7.42C9.4,7.66 8.95,8.19 8.8,8.8C8.65,9.45 8.82,10.13 9.25,10.63C8.6,10.4 8,9.75 7.8,9C7.36,9.15 7,9.54 7,10A1,1 0 0,0 8,11H8.1C7.57,11.05 7.14,11.38 6.94,11.86C6.73,12.34 6.8,12.9 7.12,13.31C5.79,13.56 3.65,14.4 3.5,15.5V19H10V17.5H5.09C5.57,16.71 8.35,15.75 12,15.75C12.39,15.75 12.77,15.77 13.14,15.8C13.25,16.29 13.46,16.74 13.74,17.13C13.19,17.21 12.61,17.25 12,17.25C11.38,17.25 10.83,17.29 10.33,17.37C11.08,18.3 12.44,19 14,19H20.5V15.5C20.35,14.4 18.21,13.56 16.88,13.31C17.2,12.9 17.27,12.34 17.06,11.86C16.86,11.38 16.43,11.05 15.9,11H16A1,1 0 0,0 17,10C17,9.54 16.64,9.15 16.2,9C16,9.75 15.4,10.4 14.75,10.63C15.18,10.13 15.35,9.45 15.2,8.8C15.05,8.19 14.6,7.66 14,7.42C13.96,7.23 13.92,7.05 13.88,6.88C13.74,6.27 13.5,5.69 13.2,5.18C13.5,5.16 13.72,5.15 14,5.15C16.3,5.15 18.44,6.38 19,8H19.05L19,8.03V8H19Z" />
@@ -418,7 +373,6 @@
                 <p id="card2-d">للنقاشات والاستفسارات</p>
             </a>
 
-            <!-- زر الحساب (الرابط الخاص بك) -->
             <a href="https://t.me/O_I_I3" target="_blank" class="real-card" onclick="playSound()">
                 <svg class="icon-box" viewBox="0 0 24 24">
                     <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
@@ -434,11 +388,7 @@
         </footer>
     </div>
 
-    <!-- =========================================
-         الجافاسكريبت (Logic)
-    ========================================= -->
     <script>
-        // دالة التحكم في الدخول (Intro Logic)
         function enterSite() {
             const video = document.getElementById('intro-video');
             const btn = document.getElementById('start-btn');
@@ -449,28 +399,31 @@
             // 1. إخفاء الزر
             btn.style.display = 'none';
 
-            // 2. تشغيل الفيديو مع الصوت (Unmute)
+            // 2. تشغيل الفيديو مع الصوت
             video.muted = false;
-            video.currentTime = 0; // إعادة للبداية
+            video.currentTime = 0;
             video.play().catch(e => console.log("Video play error:", e));
 
             // 3. إظهار نص التحميل
             loadText.style.display = 'block';
 
-            // 4. الانتظار لمدة 13 ثانية ثم إظهار الموقع
+            // 4. الانتظار لمدة 13 ثانية
             setTimeout(() => {
-                // إخفاء شاشة البداية بتأثير Fade Out
+                // >>> التعديل الجديد هنا: إيقاف الصوت والفيديو تماماً <<<
+                video.pause();
+                video.muted = true; // زيادة أمان لضمان انقطاع الصوت
+                
+                // إخفاء الشاشة
                 screen.style.opacity = '0';
                 
                 setTimeout(() => {
-                    screen.style.display = 'none'; // إزالة الشاشة
-                    main.style.display = 'block';  // إظهار الموقع الرئيسي
-                }, 1200); // وقت الأنيميشن للاختفاء
+                    screen.style.display = 'none';
+                    main.style.display = 'block';
+                }, 1200);
 
-            }, 13000); // 13000 مللي ثانية = 13 ثانية
+            }, 13000); 
         }
 
-        // دالة تشغيل صوت النقر
         function playSound() {
             const audio = document.getElementById('ui-sound');
             if(audio) {
@@ -479,7 +432,6 @@
             }
         }
 
-        // دالة تبديل اللغة
         let currentLang = 'ar';
         const translations = {
             ar: {
@@ -532,7 +484,6 @@
             document.getElementById('card3-d').textContent = t.c3d;
         }
 
-        // دالة تجهيز البريد الإلكتروني (Mailto)
         function handleEmail(e) {
             e.preventDefault();
             const rec = document.getElementById('rec-email').value;
@@ -552,7 +503,6 @@
                 if(own) finalMsg += `- Owner User: ${own}\n`;
             }
 
-            // فتح تطبيق الإيميل
             window.location.href = `mailto:${rec}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(finalMsg)}`;
         }
     </script>
