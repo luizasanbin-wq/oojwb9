@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة تجهيز البلاغات الرسمية | Official Reporting Tool</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--primary-color);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .lang-btn:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #777;
+            text-align: center;
+            line-height: 1.5;
+            background: #fafafa;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #eee;
+        }
+
+        /* Direction specific styles */
+        [dir="rtl"] { text-align: right; }
+        [dir="ltr"] { text-align: left; }
+        
+        [dir="rtl"] .lang-btn { font-family: sans-serif; }
+        [dir="ltr"] .lang-btn { font-family: sans-serif; }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1 id="page-title">نموذج صياغة بلاغ رسمي</h1>
+            <button id="lang-toggle" class="lang-btn" onclick="toggleLanguage()">English</button>
+        </header>
+
+        <form id="reportForm" onsubmit="prepareEmail(event)">
+            <div class="form-group">
+                <label for="recipientEmail" id="lbl-recipient">بريد الجهة المستقبلة</label>
+                <input type="email" id="recipientEmail" required placeholder="example@authority.gov">
+            </div>
+
+            <div class="form-group">
+                <label for="subject" id="lbl-subject">موضوع الرسالة</label>
+                <input type="text" id="subject" required>
+            </div>
+
+            <div class="form-group">
+                <label for="botUser" id="lbl-botUser">يوزر البوت (إن وجد)</label>
+                <input type="text" id="botUser" style="direction: ltr;">
+            </div>
+
+            <div class="form-group">
+                <label for="botOwner" id="lbl-botOwner">يوزر مالك البوت</label>
+                <input type="text" id="botOwner" style="direction: ltr;">
+            </div>
+
+            <div class="form-group">
+                <label for="messageBody" id="lbl-body">نص البلاغ / التفاصيل</label>
+                <textarea id="messageBody" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="btn-submit">تجهيز وفتح البريد الإلكتروني</button>
+        </form>
+
+        <div class="disclaimer" id="disclaimer-text">
+            تنبيه: هذا الموقع لا يقوم بتخزين أي بيانات ولا يرسل الرسائل تلقائياً. عند الضغط على الزر، سيتم فتح تطبيق البريد الافتراضي في جهازك لتقوم أنت بمراجعة الرسالة وإرسالها بنفسك.
+        </div>
+    </div>
+
+    <script>
+        // قاموس الترجمة
+        const translations = {
+            ar: {
+                title: "نموذج صياغة بلاغ رسمي",
+                toggleBtn: "English",
+                lblRecipient: "بريد الجهة المستقبلة",
+                lblSubject: "موضوع الرسالة",
+                lblBotUser: "يوزر البوت (المُخالِف/المعني)",
+                lblBotOwner: "يوزر مالك البوت (إن وجد)",
+                lblBody: "نص البلاغ / التفاصيل القانونية",
+                btnSubmit: "تجهيز وفتح البريد الإلكتروني",
+                disclaimer: "تنبيه: هذا الموقع لا يقوم بتخزين أي بيانات ولا يرسل الرسائل تلقائياً. عند الضغط على الزر، سيتم فتح تطبيق البريد الافتراضي في جهازك لتقوم أنت بمراجعة الرسالة وإرسالها بنفسك.",
+                placeholders: {
+                    recipient: "example@authority.gov",
+                    subject: "بلاغ بخصوص...",
+                    body: "أكتب تفاصيل البلاغ هنا..."
+                },
+                confirmMsg: "سيتم الآن فتح تطبيق البريد الإلكتروني الافتراضي لديك.\n\nسيتم الإرسال من بريدك الشخصي وبمعرفتك.\n\nهل تود المتابعة؟"
+            },
+            en: {
+                title: "Official Report Form",
+                toggleBtn: "العربية",
+                lblRecipient: "Recipient Email Authority",
+                lblSubject: "Subject",
+                lblBotUser: "Bot Username (Target)",
+                lblBotOwner: "Bot Owner Username",
+                lblBody: "Report Details / Legal Text",
+                btnSubmit: "Prepare & Open Email Client",
+                disclaimer: "Notice: This site does not store data nor send emails automatically. Clicking the button will open your default email app for you to review and send the email yourself.",
+                placeholders: {
+                    recipient: "example@authority.gov",
+                    subject: "Report regarding...",
+                    body: "Enter report details here..."
+                },
+                confirmMsg: "Your default email application will now open.\n\nThe email will be sent from your personal account under your supervision.\n\nDo you wish to proceed?"
+            }
+        };
+
+        let currentLang = 'ar';
+
+        // دالة تبديل اللغة
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const langData = translations[currentLang];
+            const htmlTag = document.documentElement;
+
+            // تحديث الاتجاه واللغة
+            htmlTag.setAttribute('lang', currentLang);
+            htmlTag.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+
+            // تحديث النصوص
+            document.getElementById('page-title').textContent = langData.title;
+            document.getElementById('lang-toggle').textContent = langData.toggleBtn;
+            document.getElementById('lbl-recipient').textContent = langData.lblRecipient;
+            document.getElementById('lbl-subject').textContent = langData.lblSubject;
+            document.getElementById('lbl-botUser').textContent = langData.lblBotUser;
+            document.getElementById('lbl-botOwner').textContent = langData.lblBotOwner;
+            document.getElementById('lbl-body').textContent = langData.lblBody;
+            document.getElementById('btn-submit').textContent = langData.btnSubmit;
+            document.getElementById('disclaimer-text').textContent = langData.disclaimer;
+
+            // تحديث الـ Placeholders
+            document.getElementById('recipientEmail').placeholder = langData.placeholders.recipient;
+            document.getElementById('subject').placeholder = langData.placeholders.subject;
+            document.getElementById('messageBody').placeholder = langData.placeholders.body;
+        }
+
+        // دالة معالجة النموذج وتجهيز الرابط
+        function prepareEmail(event) {
+            event.preventDefault();
+
+            const recipient = document.getElementById('recipientEmail').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const botUser = document.getElementById('botUser').value.trim();
+            const botOwner = document.getElementById('botOwner').value.trim();
+            const mainBody = document.getElementById('messageBody').value.trim();
+
+            if (!recipient || !subject || !mainBody) {
+                alert(currentLang === 'ar' ? "يرجى ملء الحقول الأساسية." : "Please fill in the required fields.");
+                return;
+            }
+
+            // رسالة التأكيد قبل الفتح
+            const userConfirmed = confirm(translations[currentLang].confirmMsg);
+
+            if (userConfirmed) {
+                // تنسيق نص الرسالة ليظهر بشكل احترافي داخل البريد
+                let emailBody = "";
+                
+                if (currentLang === 'ar') {
+                    emailBody += `${mainBody}\n\n`;
+                    emailBody += `--------------------------------\n`;
+                    emailBody += `بيانات إضافية للبلاغ:\n`;
+                    if (botUser) emailBody += `- يوزر البوت: ${botUser}\n`;
+                    if (botOwner) emailBody += `- يوزر المالك: ${botOwner}\n`;
+                } else {
+                    emailBody += `${mainBody}\n\n`;
+                    emailBody += `--------------------------------\n`;
+                    emailBody += `Additional Report Information:\n`;
+                    if (botUser) emailBody += `- Bot Username: ${botUser}\n`;
+                    if (botOwner) emailBody += `- Bot Owner: ${botOwner}\n`;
+                }
+
+                // بناء رابط mailto مع ترميز المحتوى
+                // encodeURIComponent ضروري جداً لدعم العربية والرموز الخاصة
+                const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+
+                // فتح تطبيق البريد
+                window.location.href = mailtoLink;
+            }
+        }
+    </script>
+</body>
+</html>
