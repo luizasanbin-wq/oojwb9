@@ -1,0 +1,18 @@
+{
+  "name": "equinox-server",
+  "version": "1.0.0",
+  "description": "Equinox Email Sender API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "nodemailer": "^6.9.4",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

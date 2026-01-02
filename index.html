@@ -23,7 +23,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            /* خلفية صورة bg.jpg */
+            /* تأكد من وجود صورة bg.jpg في نفس المجلد */
             background: url('bg.jpg') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-main);
@@ -32,7 +32,6 @@
             min-height: 100vh;
         }
 
-        /* طبقة تغميق */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
@@ -48,7 +47,6 @@
             transition: opacity 0.8s ease;
         }
 
-        /* الزر الأول */
         #entry-btn {
             padding: 18px 60px; font-size: 1.3rem; font-weight: bold; color: #fff;
             background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.4);
@@ -58,7 +56,6 @@
         }
         #entry-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.05); }
 
-        /* زر الانتظار */
         #loading-btn {
             display: none; padding: 18px 60px; font-size: 1.3rem; font-weight: bold;
             color: var(--accent); background: rgba(0, 0, 0, 0.8);
@@ -104,6 +101,7 @@
             cursor: pointer; transition: 0.3s; margin-top: 10px;
         }
         .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(255,255,255,0.3); }
+        .submit-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
 
         /* البطاقات */
         .cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 50px; padding-bottom: 50px; }
@@ -118,7 +116,6 @@
         .real-card h3 { color: #fff; margin-bottom: 5px; font-size: 1.1rem; }
         .real-card p { color: var(--text-sec); font-size: 0.85rem; }
 
-        /* الأنيميشن */
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); } 70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -130,13 +127,11 @@
     <audio id="ui-sound" src="click.mp3"></audio>
     <div class="overlay"></div>
 
-    <!-- الصفحة 1: صفحة الدخول (بدون أي نصوص إضافية) -->
     <div id="intro-page">
         <button id="entry-btn" onclick="startEntrance()">اضغط للدخول</button>
         <button id="loading-btn">جاري الدخول للموقع...</button>
     </div>
 
-    <!-- الصفحة 2: الصفحة الرئيسية -->
     <div id="main-page">
         <nav>
             <div class="logo">EQUINOX <span>PORTAL</span></div>
@@ -144,38 +139,47 @@
         </nav>
 
         <section style="text-align: center; margin-top: 40px;">
-            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">نظام البلاغات الرسمي</h1>
-            <p style="color: var(--text-sec);">منصة آمنة وسريعة للمراسلات القانونية</p>
+            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">نظام البلاغات السحابي</h1>
+            <p style="color: var(--text-sec);">منصة آلية للإرسال عبر السيرفر</p>
 
             <div class="glass-form">
-                <!-- استخدام نفس معرفات الكود القديم لضمان العمل -->
-                <form id="reportForm" onsubmit="prepareEmail(event)">
+                <form id="reportForm" onsubmit="sendToServer(event)">
+                    <!-- الصف الأول: البريد والموضوع -->
                     <div class="form-grid">
                         <div>
                             <label id="lbl-rec">بريد الجهة المستقبلة</label>
-                            <!-- استخدام نفس ID الكود القديم: recipientEmail -->
-                            <input type="email" id="recipientEmail" required placeholder="example@authority.gov">
+                            <input type="email" id="recipientEmail" required placeholder="example@target.com">
                         </div>
                         
                         <div>
                             <label id="lbl-sub">موضوع الرسالة</label>
-                            <!-- استخدام نفس ID الكود القديم: subject -->
                             <input type="text" id="subject" required>
+                        </div>
+                    </div>
+
+                    <!-- الصف الثاني: العدد والفاصل الزمني -->
+                    <div class="form-grid">
+                        <div>
+                            <label id="lbl-cnt">عدد الرسائل</label>
+                            <input type="number" id="msgCount" min="1" value="1" required>
+                        </div>
+                        
+                        <div>
+                            <label id="lbl-int">الفاصل الزمني (ثواني)</label>
+                            <input type="number" id="msgInterval" min="1" value="5" required>
                         </div>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <label id="lbl-msg">نص البلاغ / التفاصيل</label>
-                        <!-- استخدام نفس ID الكود القديم: messageBody -->
+                        <label id="lbl-msg">نص البلاغ / الرسالة</label>
                         <textarea id="messageBody" required></textarea>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="btn-submit" onclick="playSound()">تجهيز وفتح البريد الإلكتروني</button>
+                    <button type="submit" class="submit-btn" id="btn-submit" onclick="playSound()">بدء الإرسال</button>
                 </form>
             </div>
         </section>
 
-        <!-- الروابط -->
         <div class="cards-container">
             <a href="https://t.me/T_V9RN" target="_blank" class="real-card" onclick="playSound()">
                 <svg class="icon-box" viewBox="0 0 24 24"><path d="M12,3L4,9H2V15H4L12,21V3M16.5,12C16.5,10.23 15.48,8.71 14,7.97V16.02C15.48,15.29 16.5,13.77 16.5,12M19,12C19,12.9 18.82,13.76 18.5,14.56L19.92,15.97C20.6,14.81 21,13.46 21,12C21,7.72 17.5,4.28 14,4V6C16.76,6.28 19,8.88 19,12Z" /></svg>
@@ -195,7 +199,11 @@
     </div>
 
     <script>
-        // دالة الدخول الذكية
+        // ====================== إعدادات السيرفر ======================
+        // استبدل الرابط أدناه برابط الـ API الخاص بسيرفرك
+        const API_URL = "https://your-server-domain.com/api/send"; 
+        // ==============================================================
+
         function startEntrance() {
             const entryBtn = document.getElementById('entry-btn');
             const loadingBtn = document.getElementById('loading-btn');
@@ -205,11 +213,9 @@
 
             if(audio) { audio.currentTime = 0; audio.play().catch(() => {}); }
 
-            // تبديل الأزرار
             entryBtn.style.display = 'none';
             loadingBtn.style.display = 'block';
 
-            // انتظار قصير ثم الدخول
             setTimeout(() => {
                 introPage.style.opacity = '0';
                 setTimeout(() => {
@@ -227,12 +233,34 @@
         let currentLang = 'ar';
         const translations = {
             ar: {
-                toggle: 'English', rec: 'بريد الجهة المستقبلة', sub: 'موضوع الرسالة', msg: 'نص البلاغ / التفاصيل', btn: 'تجهيز وفتح البريد الإلكتروني',
-                c1t: 'القناة الرسمية', c1d: 'تابع التحديثات', c2t: 'مجتمع الأعضاء', c2d: 'للنقاشات والاستفسارات', c3t: 'حساب المالك', c3d: 'للتواصل المباشر'
+                toggle: 'English', 
+                rec: 'بريد الجهة المستقبلة', 
+                sub: 'موضوع الرسالة', 
+                cnt: 'عدد الرسائل',
+                int: 'الفاصل الزمني (ثواني)',
+                msg: 'نص البلاغ / الرسالة', 
+                btn: 'بدء الإرسال',
+                btnLoading: 'جاري الإرسال...',
+                c1t: 'القناة الرسمية', c1d: 'تابع التحديثات', 
+                c2t: 'مجتمع الأعضاء', c2d: 'للنقاشات والاستفسارات', 
+                c3t: 'حساب المالك', c3d: 'للتواصل المباشر',
+                success: 'تم إرسال الطلب للسيرفر بنجاح!',
+                error: 'حدث خطأ أثناء الاتصال بالسيرفر.'
             },
             en: {
-                toggle: 'العربية', rec: 'Recipient Email', sub: 'Subject', msg: 'Report Details', btn: 'Prepare & Open Email Client',
-                c1t: 'Official Channel', c1d: 'Follow Updates', c2t: 'Community Group', c2d: 'Discussions', c3t: 'Owner Account', c3d: 'Direct Contact'
+                toggle: 'العربية', 
+                rec: 'Recipient Email', 
+                sub: 'Subject', 
+                cnt: 'Count',
+                int: 'Interval (Sec)',
+                msg: 'Message Body', 
+                btn: 'Start Sending',
+                btnLoading: 'Sending...',
+                c1t: 'Official Channel', c1d: 'Follow Updates', 
+                c2t: 'Community Group', c2d: 'Discussions', 
+                c3t: 'Owner Account', c3d: 'Direct Contact',
+                success: 'Request sent to server successfully!',
+                error: 'Error connecting to the server.'
             }
         };
 
@@ -245,8 +273,16 @@
             document.getElementById('lang-btn').textContent = t.toggle;
             document.getElementById('lbl-rec').textContent = t.rec;
             document.getElementById('lbl-sub').textContent = t.sub;
+            document.getElementById('lbl-cnt').textContent = t.cnt;
+            document.getElementById('lbl-int').textContent = t.int;
             document.getElementById('lbl-msg').textContent = t.msg;
-            document.getElementById('btn-submit').textContent = t.btn;
+            
+            // تحديث زر الإرسال فقط إذا لم يكن في وضع التحميل
+            const submitBtn = document.getElementById('btn-submit');
+            if (!submitBtn.disabled) {
+                submitBtn.textContent = t.btn;
+            }
+
             document.getElementById('card1-t').textContent = t.c1t;
             document.getElementById('card1-d').textContent = t.c1d;
             document.getElementById('card2-t').textContent = t.c2t;
@@ -256,29 +292,60 @@
         }
 
         // ===================================================================
-        //  دالة الإرسال (مأخوذة من الكود القديم الذي يعمل معك)
+        //  دالة الإرسال إلى السيرفر (API)
         // ===================================================================
-        function prepareEmail(event) {
+        async function sendToServer(event) {
             event.preventDefault();
 
-            // استخدام .trim() لضمان عدم وجود مسافات مخفية
             const recipient = document.getElementById('recipientEmail').value.trim();
             const subject = document.getElementById('subject').value.trim();
-            const mainBody = document.getElementById('messageBody').value.trim();
+            const count = document.getElementById('msgCount').value;
+            const interval = document.getElementById('msgInterval').value;
+            const messageBody = document.getElementById('messageBody').value.trim();
+            const submitBtn = document.getElementById('btn-submit');
+            const t = translations[currentLang];
 
-            if (!recipient || !subject || !mainBody) {
-                alert("يرجى ملء الحقول الأساسية.");
-                return;
+            // 1. قفل الزر لتجنب التكرار
+            submitBtn.disabled = true;
+            submitBtn.textContent = t.btnLoading;
+            submitBtn.style.opacity = "0.7";
+
+            // 2. تجهيز البيانات بصيغة JSON
+            const payload = {
+                target_email: recipient,
+                subject: subject,
+                count: parseInt(count),
+                interval: parseInt(interval),
+                message: messageBody
+            };
+
+            try {
+                // 3. إرسال الطلب (Fetch)
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // 4. معالجة الرد
+                if (response.ok) {
+                    alert(t.success);
+                } else {
+                    alert(t.error + ` (Code: ${response.status})`);
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert(t.error + "\n" + error.message);
+            } finally {
+                // 5. إعادة تفعيل الزر
+                submitBtn.disabled = false;
+                submitBtn.textContent = t.btn;
+                submitBtn.style.opacity = "1";
             }
-
-            // تجهيز نص الرسالة (تم حذف البوت والمالك من هنا)
-            let emailBody = `${mainBody}`;
-
-            // بناء الرابط بنفس طريقة الكود القديم
-            const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-
-            // فتح التطبيق
-            window.location.href = mailtoLink;
         }
     </script>
 </body>
